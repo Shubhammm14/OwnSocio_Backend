@@ -2,20 +2,22 @@ package com.example.OwnSocio.services;
 
 import com.example.OwnSocio.Modal.User;
 import com.example.OwnSocio.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private  UserRepository userRepository;
 
     @Override
     public User registerUser(User user) {
-        return userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(),user.getGender(),user.getFollowers(),user.getFollowings()));
+        return userRepository.save(new User(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(), user.getGender(), user.getFollowers(), user.getFollowings(),user.getSavedPost()));
     }
 
     @Override
@@ -31,43 +33,70 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User followUser(Integer userId1, Integer userId2) {
-        User user1=userRepository.getById(userId1);
-        User user2=userRepository.getById(userId2);
-        user1.getFollowers().add(userId1);
-        user2.getFollowers().add(userId2);
-        userRepository.save(user1);
-        userRepository.save(user2);
-        // You may implement the logic to establish a "follow" relationship between two users here
-        // This could involve updating the database to reflect the relationship
-        return user1; // For now, returning null as the implementation is not provided
+        // Retrieve user1 and user2 from the repository
+        User user1 = userRepository.findById(userId1).orElse(null);
+        User user2 = userRepository.findById(userId2).orElse(null);
+
+        // Check if both users exist
+        if (user1 == null || user2 == null) {
+            // If any user is not found, return null or throw an exception as per your requirement
+            return null;
+        }
+
+        // Initialize followers list if null
+        if (user1.getFollowers() == null) {
+            user1.setFollowers(new ArrayList<>());
+        }
+        if (user2.getFollowers() == null) {
+            user2.setFollowers(new ArrayList<>());
+        }
+
+        // Initialize followings list if null
+        if (user1.getFollowings() == null) {
+            user1.setFollowings(new ArrayList<>());
+        }
+        if (user2.getFollowings() == null) {
+            user2.setFollowings(new ArrayList<>());
+        }
+
+        // Add user2 to the followers list of user1 and user1 to the followings list of user2
+        user1.getFollowers().add(userId2);
+        user2.getFollowings().add(userId1);
+
+        // Save both users in a single operation
+        userRepository.saveAll(List.of(user1, user2));
+
+        return user1; // Return user1 or user2 as per your requirement
     }
 
     @Override
-    public User updateUser(User user,Integer userId) throws Exception {
+    public User updateUser(User user, Integer userId) throws Exception {
         Optional<User> userOptional = userRepository.findById(userId);
-        if(userOptional.isEmpty()){
-            throw new Exception("User Does not exist with the id " + userId);
+        if (userOptional.isEmpty()) {
+            throw new Exception("User does not exist with the id " + userId);
         }
         User existingUser = userOptional.get();
-        if(user.getFirstName() != null)
+        if (user.getFirstName() != null)
             existingUser.setFirstName(user.getFirstName());
-        if(user.getLastName() != null)
+        if (user.getLastName() != null)
             existingUser.setLastName(user.getLastName());
-        if(user.getEmail() != null)
+        if (user.getEmail() != null)
             existingUser.setEmail(user.getEmail());
-        if(user.getPassword() != null)
+        if (user.getPassword() != null)
             existingUser.setPassword(user.getPassword());
-        if(user.getFollowings()!=null)
+        if (user.getFollowings() != null)
             existingUser.setFollowings(user.getFollowings());
-        if(user.getFollowers()!=null)
+        if (user.getFollowers() != null)
             existingUser.setFollowers(user.getFollowers());
         return userRepository.save(existingUser);
     }
 
     @Override
     public List<User> searchUserByQuery(String query) {
+        List<User> l = userRepository.searchUser(query);
+
         // You may implement the logic to search for users based on a query here
         // This could involve searching user records based on certain criteria like name, email, etc.
-        return null; // For now, returning null as the implementation is not provided
+        return l; // For now, returning null as the implementation is not provided
     }
 }

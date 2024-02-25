@@ -2,12 +2,14 @@ package com.example.OwnSocio.controller;
 
 import com.example.OwnSocio.Modal.User;
 import com.example.OwnSocio.repository.UserRepository;
+import com.example.OwnSocio.response.ApiResponse;
 import com.example.OwnSocio.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -21,7 +23,7 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/Api/user/{userId}")
     public User getUserById(@PathVariable Integer userId) throws Exception {
       if(userService.findUserById(userId)!=null)
           return userService.findUserById(userId);
@@ -41,8 +43,20 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteuser/{userId}")
-    public String deleteUser(@PathVariable Integer userId){
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId){
         userRepository.deleteById(userId);
-        return "User with id " + userId + " has been deleted successfully.";
+        return new ResponseEntity<>(new ApiResponse("User with id " + userId + " has been deleted successfully.",true), HttpStatus.GONE);
     }
+    @PutMapping("/follow/users/{user1}/{user2}")
+    public ResponseEntity<User> followUserHandler(@PathVariable Integer user1,@PathVariable Integer user2){
+        User user=userService.followUser(user1,user2);
+        return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+    @GetMapping("/user/search")
+    public ResponseEntity<List<User>> userQueryHandler(@RequestParam ("query")String query){
+        List<User> users=userService.searchUserByQuery(query);
+        return new ResponseEntity<>(users,HttpStatus.GONE);
+    }
+
+
 }

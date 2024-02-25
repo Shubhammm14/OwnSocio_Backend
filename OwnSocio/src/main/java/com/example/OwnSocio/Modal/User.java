@@ -1,13 +1,14 @@
 package com.example.OwnSocio.Modal;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
-
+@JsonIdentityInfo( generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class User {
     @Id
@@ -15,6 +16,8 @@ public class User {
     private Integer id;
 
     private String firstName;
+
+
     private String lastName;
     private String email;
     private String password;
@@ -22,10 +25,12 @@ public class User {
 
     private List<Integer> followers;
     private List<Integer> followings;
+    @ManyToMany
+    private List<Post> savedPost=new ArrayList<>();
     // Constructor with parameters
 
 
-    public User( String firstName, String lastName, String email, String password, String gender, List<Integer> followers, List<Integer> followings) {
+    public User( String firstName, String lastName, String email, String password, String gender, List<Integer> followers, List<Integer> followings, List<Post> savedPost) {
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,10 +39,18 @@ public class User {
         this.gender = gender;
         this.followers = followers;
         this.followings = followings;
+        this.savedPost = savedPost;
     }
 
     // Default constructor
     public User() {
+    }
+    public List<Post> getSavedPost() {
+        return savedPost;
+    }
+
+    public void setSavedPost(List<Post> savedPost) {
+        this.savedPost = savedPost;
     }
 
     // Getter and Setter methods
