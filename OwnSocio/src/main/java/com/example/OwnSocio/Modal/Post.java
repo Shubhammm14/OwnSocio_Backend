@@ -17,7 +17,8 @@ public class Post {
     private String caption;
     private String image;
     private String video;
-
+    @OneToMany
+   private List<Comment> comments=new ArrayList<>();
     @ManyToOne
 
     private User user;
@@ -34,6 +35,14 @@ public class Post {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     public String getCaption() {
@@ -84,12 +93,15 @@ public class Post {
         this.liked = liked;
     }
 
-    public Post(String caption, String imageUrl, String videoUrl, User user, LocalDateTime createdAt) {
+    public Post(Integer id, String caption, String image, String video, List<Comment> comments, User user, LocalDateTime createdAt, List<User> liked) {
+        this.id = id;
         this.caption = caption;
-        this.image = imageUrl;
-        this.video = videoUrl;
+        this.image = image;
+        this.video = video;
+        this.comments = comments;
         this.user = user;
         this.createdAt = createdAt;
+        this.liked = liked;
     }
 
     public Post() {

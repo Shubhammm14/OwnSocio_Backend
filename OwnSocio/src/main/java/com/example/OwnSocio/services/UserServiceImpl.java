@@ -1,6 +1,8 @@
 package com.example.OwnSocio.services;
 
 import com.example.OwnSocio.Modal.User;
+import com.example.OwnSocio.config.JwtProvider;
+import com.example.OwnSocio.exception.UserExcepition;
 import com.example.OwnSocio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,8 +62,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // Add user2 to the followers list of user1 and user1 to the followings list of user2
-        user1.getFollowers().add(userId2);
-        user2.getFollowings().add(userId1);
+        user2.getFollowers().add(userId1);
+        user1.getFollowings().add(userId2);
 
         // Save both users in a single operation
         userRepository.saveAll(List.of(user1, user2));
@@ -70,10 +72,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user, Integer userId) throws Exception {
+    public User updateUser(User user, Integer userId) throws UserExcepition {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
-            throw new Exception("User does not exist with the id " + userId);
+            throw new UserExcepition("User does not exist with the id " + userId);
         }
         User existingUser = userOptional.get();
         if (user.getFirstName() != null)
@@ -88,6 +90,8 @@ public class UserServiceImpl implements UserService {
             existingUser.setFollowings(user.getFollowings());
         if (user.getFollowers() != null)
             existingUser.setFollowers(user.getFollowers());
+        if(user.getGender()!=null)
+            existingUser.setGender(user.getGender());
         return userRepository.save(existingUser);
     }
 
@@ -98,5 +102,13 @@ public class UserServiceImpl implements UserService {
         // You may implement the logic to search for users based on a query here
         // This could involve searching user records based on certain criteria like name, email, etc.
         return l; // For now, returning null as the implementation is not provided
+    }
+
+    @Override
+    public User findUserByJwt(String token) {
+        String email= JwtProvider.getEmailFromJwtToken(token);
+        User user= userRepository.findByEmail(email);
+        user.setPassword(null);
+        return user;
     }
 }

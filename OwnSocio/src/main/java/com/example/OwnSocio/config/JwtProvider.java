@@ -28,9 +28,10 @@ public class JwtProvider {
         // Build the JWT
         String jwt = Jwts.builder()
                 .setIssuer(issuer)
-                .setSubject(email) // Set subject as email
+               // .setSubject(email) // Set subject as email
                 .setIssuedAt(now) // Set issue time
                 .setExpiration(expiryTime) // Set expiration time
+                .claim("email",authentication.getName())
                 .signWith(KEY) // Sign the JWT with the secret key
                 .compact();
 

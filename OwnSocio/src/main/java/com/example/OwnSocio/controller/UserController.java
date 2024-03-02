@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/Api")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
@@ -23,33 +24,35 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/Api/user/{userId}")
-    public User getUserById(@PathVariable Integer userId) throws Exception {
-      if(userService.findUserById(userId)!=null)
+    @GetMapping("/user")
+    public User getUserById(@RequestHeader ("Authorization") String jwt) throws Exception {
+        Integer userId=userService.findUserByJwt(jwt).getId();
+        if(userService.findUserById(userId)!=null)
           return userService.findUserById(userId);
       else
           throw new Exception("user does not exist");
     }
 
-    @PostMapping("/create")
-    public User createUser(@RequestBody User user){
-        return userService.registerUser(user);
+    @GetMapping("/user/profile")
+    public User getUserProfile(@RequestHeader ("Authorization") String jwt){
+        return userService.findUserByJwt(jwt);
     }
-
-    @PutMapping("/updateuser/{userId}")
-    public User updateUserDetail(@RequestBody User user, @PathVariable Integer userId) throws Exception {
-
+    @PutMapping("/update/user")
+    public User updateUserDetail(@RequestBody User user,@RequestHeader("Authorization") String jwt) throws Exception {
+         Integer userId=userService.findUserByJwt(jwt).getId();
         return userService.updateUser(user,userId);
     }
 
-    @DeleteMapping("/deleteuser/{userId}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId){
+    @DeleteMapping("/delete/user")
+    public ResponseEntity<ApiResponse> deleteUser(@RequestHeader("Authorization") String jwt){
+        Integer userId=userService.findUserByJwt(jwt).getId();
         userRepository.deleteById(userId);
         return new ResponseEntity<>(new ApiResponse("User with id " + userId + " has been deleted successfully.",true), HttpStatus.GONE);
     }
-    @PutMapping("/follow/users/{user1}/{user2}")
-    public ResponseEntity<User> followUserHandler(@PathVariable Integer user1,@PathVariable Integer user2){
-        User user=userService.followUser(user1,user2);
+    @PutMapping("/follow/user/{user2}")
+    public ResponseEntity<User> followUserHandler(@RequestHeader ("Authorization") String jwt,@PathVariable Integer user2){
+        Integer userReq=userService.findUserByJwt(jwt).getId();
+        User user=userService.followUser(userReq,user2);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
     @GetMapping("/user/search")
