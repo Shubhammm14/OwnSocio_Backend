@@ -34,6 +34,7 @@ public class AuthController {
     @PostMapping("/signup")
     public AuthResponse createUser(@RequestBody User user)throws UserExcepition{
         User isExist=userRepository.findByEmail((user.getEmail()));
+
         if(isExist!=null)
         {
             throw new UserExcepition("this email already used with another account");
@@ -51,6 +52,7 @@ public class AuthController {
     }
     @PostMapping("/signin")
     public AuthResponse signin(@RequestBody LoginRequest loginRequest) throws Exception {
+
         Authentication authentication= authenticate(loginRequest.getEmail(),loginRequest.getPassword());
         String token=JwtProvider.generateToken(authentication);
         return new AuthResponse(token,"validation done");

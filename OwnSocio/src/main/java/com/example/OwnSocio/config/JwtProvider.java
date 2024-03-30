@@ -17,7 +17,6 @@ public class JwtProvider {
     public static String generateToken(Authentication authentication) {
         // Extract the principal (in this case, email) from the authentication object
         String email = authentication.getName();
-
         // Set the token's issuer (you can customize this as needed)
         String issuer = "Shubham";
 

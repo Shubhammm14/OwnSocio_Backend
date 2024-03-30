@@ -16,7 +16,7 @@ public class MessageController {
     private MessageService messageService;
     @Autowired
     private UserService userService;
-    @GetMapping("/create/msg/{chatId}")
+    @PostMapping("/create/msg/{chatId}")
     public Message createMessage(@RequestHeader("Authorization") String jwt, @PathVariable Integer chatId,@RequestBody Message msg){
         User user=userService.findUserByJwt(jwt);
         return messageService.createMessage(user.getId(),chatId,msg);

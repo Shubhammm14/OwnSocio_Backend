@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-@JsonIdentityInfo( generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//@JsonIdentityInfo( generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class User {
     @Id
@@ -16,10 +16,14 @@ public class User {
     private Integer id;
 
     private String firstName;
-
+    private String profileImg;
+    private String coverImg;
 
     private String lastName;
     private String email;
+
+    private String bio;
+    private String website;
     private String password;
     private String gender;
 
@@ -30,7 +34,23 @@ public class User {
     // Constructor with parameters
 
 
-    public User( String firstName, String lastName, String email, String password, String gender, List<Integer> followers, List<Integer> followings, List<Post> savedPost) {
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public User(String firstName, String lastName, String email, String password, String gender, List<Integer> followers, List<Integer> followings, List<Post> savedPost) {
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -95,6 +115,22 @@ public class User {
     }
 
     // toString method for easy printing of User objects
+
+    public String getProfileImg() {
+        return profileImg;
+    }
+
+    public void setProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
+
+    public String getCoverImg() {
+        return coverImg;
+    }
+
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
+    }
 
     @Override
     public String toString() {

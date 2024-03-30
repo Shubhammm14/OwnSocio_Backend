@@ -44,7 +44,7 @@ public class AppConfig {
         CorsConfiguration cfg=new CorsConfiguration();
         cfg.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000"
-                //"http://shubham.socio.com
+                //"http://shubham.socio.com"
         ));
         cfg.setAllowedMethods(Collections.singletonList("*"));
         cfg.setAllowCredentials(true);

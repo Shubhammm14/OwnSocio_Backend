@@ -23,6 +23,7 @@ public class PostController {
     private UserService userService;
     @PostMapping("/posts/user")
     public ResponseEntity<Post> createPost(@RequestBody Post post ,@RequestHeader("Authorization") String jwt){
+        System.out.println("receiving");
         Integer userId=userService.findUserByJwt(jwt).getId();
         Post createPost=postService.createNewPost(post,userId);
         return  new ResponseEntity<>(createPost, HttpStatus.ACCEPTED);
@@ -47,11 +48,14 @@ public class PostController {
     }
         @GetMapping("/posts")
         public ResponseEntity<List<Post>> findAllPost(){
+
         List<Post> posts =postService.findAllPost();
+
         return new ResponseEntity<>(posts,HttpStatus.OK);
         }
         @PutMapping("/posts/save/{postId}/user")
         public ResponseEntity<Post> savedPostHandler(@PathVariable Integer postId,@RequestHeader ("Authorization")String jwt) throws Exception {
+        System.out.println("received");
         Integer userId=userService.findUserByJwt(jwt).getId();
         Post post=postService.savedPost(postId,userId);
         return new ResponseEntity<>(post,HttpStatus.ACCEPTED);

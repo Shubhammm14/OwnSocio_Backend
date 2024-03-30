@@ -35,8 +35,10 @@ public class UserController {
 
     @GetMapping("/user/profile")
     public User getUserProfile(@RequestHeader ("Authorization") String jwt){
+        //System.out.println(userService.findUserByJwt(jwt));
         return userService.findUserByJwt(jwt);
     }
+
     @PutMapping("/update/user")
     public User updateUserDetail(@RequestBody User user,@RequestHeader("Authorization") String jwt) throws Exception {
          Integer userId=userService.findUserByJwt(jwt).getId();
@@ -52,14 +54,22 @@ public class UserController {
     @PutMapping("/follow/user/{user2}")
     public ResponseEntity<User> followUserHandler(@RequestHeader ("Authorization") String jwt,@PathVariable Integer user2){
         Integer userReq=userService.findUserByJwt(jwt).getId();
+
         User user=userService.followUser(userReq,user2);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
     @GetMapping("/user/search")
-    public ResponseEntity<List<User>> userQueryHandler(@RequestParam ("query")String query){
-        List<User> users=userService.searchUserByQuery(query);
-        return new ResponseEntity<>(users,HttpStatus.GONE);
+    public ResponseEntity<List<User>> userQueryHandler(@RequestParam("query") String query) {
+        System.out.println("receive");
+        List<User> users = userService.searchUserByQuery(query);
+
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }
     }
+
 
 
 }

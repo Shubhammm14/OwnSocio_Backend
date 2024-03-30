@@ -26,6 +26,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post createNewPost(Post post, Integer userId) {
         User user = userService.findUserById(userId);
+
         Post newPost = new Post();
         newPost.setCaption(post.getCaption());
         newPost.setImage(post.getImage());
@@ -60,7 +61,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findAllPost() {
-        return postRepository.findAll();
+        return postRepository.findAllPostWithUserDetails();
     }
 
     @Override

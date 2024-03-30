@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import org.hibernate.id.IntegralDataTypeHolder;
 
 import java.time.LocalDateTime;
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Message {
     @Id

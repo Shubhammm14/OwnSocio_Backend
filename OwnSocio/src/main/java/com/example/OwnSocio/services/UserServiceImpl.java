@@ -74,26 +74,42 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user, Integer userId) throws UserExcepition {
         Optional<User> userOptional = userRepository.findById(userId);
+
         if (userOptional.isEmpty()) {
             throw new UserExcepition("User does not exist with the id " + userId);
         }
+
         User existingUser = userOptional.get();
-        if (user.getFirstName() != null)
+        // Update each field if it is not null and not an empty string in the update request
+        if (user.getFirstName() != null && !user.getFirstName().trim().isEmpty())
             existingUser.setFirstName(user.getFirstName());
-        if (user.getLastName() != null)
+        if (user.getLastName() != null && !user.getLastName().trim().isEmpty())
             existingUser.setLastName(user.getLastName());
-        if (user.getEmail() != null)
+        if (user.getEmail() != null && !user.getEmail().trim().isEmpty())
             existingUser.setEmail(user.getEmail());
-        if (user.getPassword() != null)
-            existingUser.setPassword(user.getPassword());
-        if (user.getFollowings() != null)
+        if (user.getFollowings() != null && !user.getFollowings().isEmpty())
             existingUser.setFollowings(user.getFollowings());
-        if (user.getFollowers() != null)
+        if (user.getFollowers() != null && !user.getFollowers().isEmpty())
             existingUser.setFollowers(user.getFollowers());
-        if(user.getGender()!=null)
+        if (user.getGender() != null && !user.getGender().trim().isEmpty())
             existingUser.setGender(user.getGender());
+        if (user.getProfileImg() != null && !user.getProfileImg().trim().isEmpty())
+            existingUser.setProfileImg(user.getProfileImg());
+        if (user.getCoverImg() != null && !user.getCoverImg().trim().isEmpty())
+            existingUser.setCoverImg(user.getCoverImg());
+        if (user.getWebsite() != null && !user.getWebsite().trim().isEmpty())
+            existingUser.setWebsite(user.getWebsite());
+        if (user.getBio() != null && !user.getBio().trim().isEmpty())
+            existingUser.setBio(user.getBio());
+//
+////        // Update password only if it's not null and not an empty string in the update request
+//        if (user.getPassword() != null ) {
+//            existingUser.setPassword(user.getPassword());
+//        }
+
         return userRepository.save(existingUser);
     }
+
 
     @Override
     public List<User> searchUserByQuery(String query) {
@@ -108,7 +124,6 @@ public class UserServiceImpl implements UserService {
     public User findUserByJwt(String token) {
         String email= JwtProvider.getEmailFromJwtToken(token);
         User user= userRepository.findByEmail(email);
-        user.setPassword(null);
         return user;
     }
 }

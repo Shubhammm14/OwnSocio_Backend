@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/Api/comment")
+@RequestMapping("/Api/comment/")
 public class CommentController {
     @Autowired
     private CommentService commentService;
@@ -16,6 +16,7 @@ public class CommentController {
     private UserService userService;
     @PostMapping("/post/{postId}")
     public Comment putPostComment(@RequestBody Comment comment,@PathVariable Integer postId, @RequestHeader ("Authorization") String jwt) throws Exception {
+        System.out.println("req Received"+comment.getContent());
         User user=userService.findUserByJwt(jwt);
         return commentService.createPostComment(comment,postId,user.getId());
     }
@@ -25,7 +26,7 @@ public class CommentController {
         return commentService.createReelComment(comment,reelId, user.getId());
     }
 
-    @PutMapping("/post/like/{commentId}")
+    @PutMapping("/like/{commentId}")
     public Comment commentLike(@PathVariable Integer commentId,@RequestHeader ("Authorization") String jwt)
     {
         User user=userService.findUserByJwt(jwt);
